@@ -191,8 +191,8 @@ rm(rm_accent, df_sentiment, sentiLex_lem_PT02)
 ### TF-IDF ###
 ##############
 
-df_words3 <- df_word %>% count(screenName) %>% mutate(total = n) %>% select(-n)
-df_words4 <- df_word %>% count(screenName, words)
+df_words3 <- df_words %>% count(screenName) %>% mutate(total = n) %>% select(-n)
+df_words4 <- df_words %>% count(screenName, words)
 
 df_words4 <- df_words4 %>%
   left_join(words_3, by=c("screenName"="screenName"))
