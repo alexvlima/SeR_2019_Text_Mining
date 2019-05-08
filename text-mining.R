@@ -88,7 +88,10 @@ df_words <- df %>%
 df_words2 <- df_words
 
 ### Stopwords ###
-df_words2$words <- removeWords(df_words2$words, c("https*", "tco", "pra", "sobre",
+df_words2$words <- removeWords(df_words2$words, c("https*", "tco", "pra", "sobre", 
+                                                  "a454nb9gfs","0001f3fb","0001f449",
+                                                  "2jj24ruot8","egzbclv8kc","u90ffrryw5",
+                                                  "c2wll0sjt9","0001f602","0001f44d","0001f4f8",
                                                   stopwords("en"), stopwords("pt")))
 
 ### Remove words with 1 character e empty fields ###
@@ -153,9 +156,10 @@ df_sentiment %>%
   mutate(data = lubridate::floor_date(created, "week")) %>%
   ggplot(aes(x = data, y = sentimento, fill = sentimento > 0)) +
   geom_col() +
-  ggtitle("Gráfico do Sentimento dos Tweets do Carlos Bolsonaro") +
-  ylab ("Sentimento") +
+  # ggtitle("Gráfico do Sentimento dos Tweets do Carlos Bolsonaro") +
+  ylab ("") +
   xlab("") +
+  ylim(-60, 60) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5), legend.position="none")
 
@@ -166,9 +170,10 @@ df_sentiment %>%
   mutate(data = lubridate::floor_date(created, "week")) %>%
   ggplot(aes(x = data, y = sentimento, fill = sentimento > 0)) +
   geom_col() +
-  ggtitle("Gráfico do Sentimento dos Tweets do Marcelo Freixo") +
-  ylab ("Sentimento") +
+  # ggtitle("Gráfico do Sentimento dos Tweets do Marcelo Freixo") +
+  ylab ("") +
   xlab("") +
+  ylim(-60,60) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5), legend.position="none")
 
@@ -179,11 +184,26 @@ df_sentiment %>%
   mutate(data = lubridate::floor_date(created, "week")) %>%
   ggplot(aes(x = data, y = sentimento, fill = sentimento > 0)) +
   geom_col() +
-  ggtitle("Gráfico do Sentimento dos Tweets do Rodrigo Maia") +
-  ylab ("Sentimento") +
+  # ggtitle("Gráfico do Sentimento dos Tweets do Rodrigo Maia") +
+  ylab ("") +
   xlab("") +
+  ylim(-60,60) +
   theme_minimal() +
   theme(plot.title = element_text(hjust = 0.5), legend.position="none")
+
+df_sentiment %>%
+  group_by(created, screenName) %>%
+  summarise(sentimento = sum(polarity)) %>%
+  mutate(data = lubridate::floor_date(created, "week")) %>%
+  ggplot(aes(x = data, y = sentimento, fill = sentimento > 0)) +
+  geom_col() +
+  # ggtitle("Gráfico do Sentimento dos Tweets do Rodrigo Maia") +
+  ylab ("") +
+  xlab("") +
+  ylim(-60,60) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position="none") +
+  facet_wrap(~screenName, scales = "free_x")
 
 rm(rm_accent, df_sentiment, sentiLex_lem_PT02)
 
@@ -191,11 +211,11 @@ rm(rm_accent, df_sentiment, sentiLex_lem_PT02)
 ### TF-IDF ###
 ##############
 
-df_words3 <- df_words %>% count(screenName) %>% mutate(total = n) %>% select(-n)
-df_words4 <- df_words %>% count(screenName, words)
+df_words3 <- df_words2 %>% count(screenName) %>% mutate(total = n) %>% select(-n)
+df_words4 <- df_words2 %>% count(screenName, words)
 
 df_words4 <- df_words4 %>%
-  left_join(words_3, by=c("screenName"="screenName"))
+  left_join(df_words3, by=c("screenName"="screenName"))
 
 ### Count versus Frequency ###
 ggplot(df_words4, aes(x=n/total, fill=screenName)) +
@@ -236,7 +256,7 @@ df_words4 %>% group_by(screenName) %>% top_n(10, tf_idf) %>%
   ungroup() %>% mutate(word = reorder(words, tf_idf)) %>%
   ggplot(aes(x = word, y = tf_idf, fill = screenName)) +
   geom_col(show.legend = FALSE) + 
-  facet_wrap(~screenName, ncol = 3, scales = "free") +
+  facet_wrap(~screenName, ncol = 3, scales = "free_y") +
   coord_flip() +
   labs(x = NULL, y = "tf-idf") + 
   theme_minimal()
@@ -272,5 +292,5 @@ top_terms %>%
   ggplot(aes(term, beta, fill = factor(topic))) +
   geom_col(show.legend = FALSE) +
   theme_minimal() +
-  facet_wrap(~ topic, scales = "free") +
+  facet_wrap(~ topic, scales = "free_y") +
   coord_flip() 
