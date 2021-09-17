@@ -1,5 +1,11 @@
 # Text Mining
 
+This repository has the analysis that was did for 3 politicians from Rio de Janeiro using their tweets. 
+
+The paper is published and can be downloaded at this url: <https://periodicos.uff.br/anaisdoser/article/view/29333>.
+
+That was the following steps for the text analysis: 
+
 ## Twitter
 
 Using the social network API (package twitteR), get tweets from users. 
